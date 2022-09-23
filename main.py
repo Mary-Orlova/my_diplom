@@ -1,57 +1,55 @@
-from aiogram import Bot, Dispatcher, executor
-import config
-import logging
-import requests
-from aiogram import types
-import handlers
-import bot_redis
-import information_API.hotels
-import information_API.locations
-import check.checking
+import database.base
+from loader import dp
+from loguru import logger
+from aiogram import executor
+from utils.set_bot_commands import set_default_commands
+import database
+# импорт файлов для их дальнейшей регистрации (хэндлеры)
+from handlers.default_heandlers import start, help, hello_world, lowprice, highprice, bestdeal, history,echo
+
 # задаем уровень логов
-logging.basicConfig(level=logging.INFO)
+logger.add('debug.log', format='{time} {level} {message}', level='INFO', rotation='10KB', compression='zip')
 
-# инициализация бота
-bot = Bot(token=config.API_TOKEN)
-dp = Dispatcher(bot)
 
+# уведомление в терминал -при успешном запуске бота + подгружает все команды
+@logger.catch()
 async def on_startup(_):
     print('\n=== Телеграм-бот вышел в онлайн ===')
+    start.register_handlers_start(dp)
+    help.register_handlers_help(dp)
+    hello_world.register_handlers_hello_world(dp)
+    lowprice.register_handlers_lowprice(dp)
+    highprice.register_handlers_highprice(dp)
+    bestdeal.register_handlers_bestdeal(dp)
+    history.register_handlers_history(dp)
+    echo.register_handlers_echo(dp)
+    # handlers.register_lowhighbestdeas_handlers(dp)
+    # database.base.add_in_db()
+    # await dp.bot.set_my_commands(handlers.get_commands_for_set)
+    await set_default_commands(dp)
 
 
-# Хэндлер на команду /hello-world
-@dp.message_handler(commands=["hello-world"])
-async def hello_world(message: types.Message):
-    # if not is_user_in_db(message):
-    #     add_user(message)
-    # logging.info(f'Команда "/hello-world" была вызвана')
-    await message.answer('Привет, это бот для поиска отелей!\nНапиши "/help" и познакомлю Вас с моими командами')
+@logger.catch()
+async def on_shutdown(_):
+    await dp.storage.close()
+    await dp.storage.wait_closed()
 
+# регистрация хэндлеров
+# start.register_handlers_start(dp)
+# help.register_handlers_help(dp)
+# hello_world.register_handlers_hello_world(dp)
+# lowprice.register_handlers_lowprice(dp)
+# highprice.register_handlers_highprice(dp)
+# bestdeal.register_handlers_bestdeal(dp)
+# history.register_handlers_history(dp)
+# echo.register_handlers_echo(dp)
 
-# Хэндлер на команду /help
-@dp.message_handler(commands=["help"])
-async def help(message: types.Message):
-    # if not is_user_in_db(message):
-    #     add_user(message)
-    # logging.info(f'Команда "/help" была вызвана')
-    await message.answer(
-        '\n/lowprice — вывод самых дешёвых отелей в городе'
-        '\n/highprice — вывод самых дорогих отелей в городе'
-        '\n/bestdeal — вывод отелей, наиболее подходящих по цене и расположению от центра'
-        '\n/history — вывод истории поиска отелей')
-
-# Хэндлер на сообщение приветствия
-@dp.message_handler(content_types=['text'])
-async def hello(message: types.Message):
-    if message.text == 'Привет, Journey Hotels':
-        await message.answer('Привет, это бот для поиска отелей!\nНапиши "/help" и познакомлю с моими командами')
-    else:
-        await message.answer('Привет, к сожалению, не понял запрос!\nНапиши "/help" и познакомлю с моими командами')
 
 # запускаем лонг поллинг
 if __name__ == '__main__':
     try:
-        executor.start_polling(dp, skip_updates=True, on_startup=on_startup)  # ответ бота только когда онлайн
+        executor.start_polling(dispatcher=dp, on_startup=on_startup, on_shutdown=on_shutdown, skip_updates=True)
+        # ответ бота только когда онлайн
     except Exception as error:
-        logging.error(f'Возникла ошибка: {error}')
+        logger.exception(f'Возникла ошибка при попытке запустить бота.', {error})
 
