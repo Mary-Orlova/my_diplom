@@ -5,10 +5,10 @@ from aiogram import executor
 from utils.set_bot_commands import set_default_commands
 import database
 # импорт файлов для их дальнейшей регистрации (хэндлеры)
-from handlers.default_heandlers import start, help, hello_world, lowprice, highprice, bestdeal, history,echo
+from handlers.default_heandlers import start, help, hello_world, lowprice, highprice, bestdeal, history, echo
 
 # задаем уровень логов
-logger.add('debug.log', format='{time} {level} {message}', level='INFO', rotation='10KB', compression='zip')
+logger.add('debug.log', format='{time} {level} {message}', level='INFO', rotation='1000KB', compression='zip')
 
 
 # уведомление в терминал -при успешном запуске бота + подгружает все команды
@@ -23,9 +23,7 @@ async def on_startup(_):
     bestdeal.register_handlers_bestdeal(dp)
     history.register_handlers_history(dp)
     echo.register_handlers_echo(dp)
-    # handlers.register_lowhighbestdeas_handlers(dp)
     # database.base.add_in_db()
-    # await dp.bot.set_my_commands(handlers.get_commands_for_set)
     await set_default_commands(dp)
 
 
@@ -33,16 +31,6 @@ async def on_startup(_):
 async def on_shutdown(_):
     await dp.storage.close()
     await dp.storage.wait_closed()
-
-# регистрация хэндлеров
-# start.register_handlers_start(dp)
-# help.register_handlers_help(dp)
-# hello_world.register_handlers_hello_world(dp)
-# lowprice.register_handlers_lowprice(dp)
-# highprice.register_handlers_highprice(dp)
-# bestdeal.register_handlers_bestdeal(dp)
-# history.register_handlers_history(dp)
-# echo.register_handlers_echo(dp)
 
 
 # запускаем лонг поллинг
@@ -52,4 +40,3 @@ if __name__ == '__main__':
         # ответ бота только когда онлайн
     except Exception as error:
         logger.exception(f'Возникла ошибка при попытке запустить бота.', {error})
-
