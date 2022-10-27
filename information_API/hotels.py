@@ -304,16 +304,17 @@ def generate_hotels_descriptions(hotels: dict, night: str) -> list[str]:
     hotels_info = []
 
     for hotel in hotels:
-        current_day = hotel.get('price').get('exactCurrent')
+        logger.info(f'ТЕСТ {hotel}')
+        current_day = str(hotel.get('price'))
         all_current = str(int(current_day) * int(night))
+        logger.info(f'ЗА НОЧЬ{current_day} ОБЩАЯ ЦЕНА{all_current}')
 
         message = str(
             f" Отель: {hotel.get('name')}\n"
-            f" Рейтинг: {hotel_rating(hotel.get('star_rating'), 0)}\n"
+            f" Рейтинг: {hotel_rating(hotel.get('star_rating'))}\n"
             f" Адресс: {hotel.get('address')}\n"
             f" Расположенность от центра: {hotel.get('distance')}\n"
-            f" Цена за 1 ночь: {hotel.get('price').get('exactCurrent')}\n"
-            # f" Цена за 1 ночь: {current_day}\n"
+            f" Цена за 1 ночь: {current_day}\n"
             f" Цена за все время: {all_current}\n"
             f" Ссылка: {hotel.get('ref')}\n"
             f" Фотографии отеля: {hotel.get('photos')}\n"
@@ -330,9 +331,13 @@ def hotel_price(hotel: dict) -> int:
     Возвращает стоимость за отель"""
     price = 0
     try:
-        if hotel.get('ratePlan').get('price'):
-            price = hotel.get('ratePlan').get('price')
+        if hotel.get('ratePlan').get('price').get('exactCurrent'):
+            price = hotel.get('ratePlan').get('price').get('exactCurrent')
+            price = round(price)
+        else:
+            price = hotel.get('ratePlan').get('price').get('current')
             price = int(re.sub(r'[^0-9]', '', price))
+            price = round(price)
     except Exception as exception:
         logger.exception(f'Возникла ошибка при обработке запроса получения цены отеля {exception}')
     return price
