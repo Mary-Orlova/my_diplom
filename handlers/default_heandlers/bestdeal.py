@@ -329,7 +329,6 @@ async def get_requests(message: Message, state: FSMContext) -> None:
         quantity = len(data)
         await bot.send_message(chat_id, f"{'Найденные отели'}: {quantity}")
         for hotel in data:
-            logger.debug(f'{data}')
             await bot.send_message(chat_id, hotel)
 
     await state.finish()
