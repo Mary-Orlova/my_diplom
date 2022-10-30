@@ -318,17 +318,7 @@ async def get_requests(message: Message, state: FSMContext) -> None:
                 f'\nМаксимальная дистанция от центра: {data["max_distance"]}'
 
     await bot.send_message(message.chat.id, text)
-    chat_id = message.chat.id
     await message.answer('Ваш запрос принят, выполняю поиск отелей..')
-    data = await hotels.get_hotels(message, state)
-    if not data or len(data) < 1:
-        await bot.send_message(chat_id, 'Отель не найден')
-    elif 'bad_request' in data:
-        await bot.send_message(chat_id, 'bad_request')
-    else:
-        quantity = len(data)
-        await bot.send_message(chat_id, f"{'Найденные отели'}: {quantity}")
-        for hotel in data:
-            await bot.send_message(chat_id, hotel)
+    await hotels.get_hotels(message, state)
 
     await state.finish()
