@@ -2,7 +2,7 @@ import datetime
 import re
 import requests
 from config_data.config import RAPID_API_KEY
-from aiogram.types import Message
+from aiogram.types import Message, MediaGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger
@@ -162,9 +162,7 @@ async def get_hotels(msg: Message, state: FSMContext) -> [list, None]:
     else:
         data = data['results']
         logger.debug(f'В блоке ELSE data = {data}')
-    data = generate_hotels_descriptions(data, night)
-    logger.debug(f'Вернули в get_hotels data {data}')
-    return data
+    await generate_hotels_descriptions(data, night, msg)
 
 
 @logger.catch()
@@ -293,7 +291,7 @@ def choose_best_hotels(hotels: list[dict], distance: float, limit: int) -> list[
 
 
 @logger.catch()
-def generate_hotels_descriptions(hotels: dict, night: str) -> list[str]:
+async def generate_hotels_descriptions(hotels: dict, night: str, msg: Message) -> list[str]:
     """
     Метод получения описания отеля
     :param hotels: информация об отеле
@@ -301,10 +299,17 @@ def generate_hotels_descriptions(hotels: dict, night: str) -> list[str]:
     Возвращает список (строки) с описанием отеля
     """
     logger.info(f'Метод generate_hotels_descriptions был вызван')
-    hotels_info = []
+
+    chat_id = msg.chat.id
+    if not hotels or len(hotels) < 1:
+        await bot.send_message(chat_id, 'Отель не найден')
+    elif 'bad_request' in hotels:
+        await bot.send_message(chat_id, 'bad_request')
+    else:
+        quantity = len(hotels)
+        await bot.send_message(chat_id, f"{'Найденные отели'}: {quantity}")
 
     for hotel in hotels:
-        logger.info(f'ТЕСТ {hotel}')
         current_day = str(hotel.get('price'))
         all_current = str(int(current_day) * int(night))
         logger.info(f'ЗА НОЧЬ{current_day} ОБЩАЯ ЦЕНА{all_current}')
@@ -312,16 +317,24 @@ def generate_hotels_descriptions(hotels: dict, night: str) -> list[str]:
         message = str(
             f" Отель: {hotel.get('name')}\n"
             f" Рейтинг: {hotel_rating(hotel.get('star_rating'))}\n"
-            f" Адресс: {hotel.get('address')}\n"
+            f" Адрес: {hotel.get('address')}\n"
             f" Расположенность от центра: {hotel.get('distance')}\n"
             f" Цена за 1 ночь: {current_day}\n"
             f" Цена за все время: {all_current}\n"
             f" Ссылка: {hotel.get('ref')}\n"
-            f" Фотографии отеля: {hotel.get('photos')}\n"
-            )
+        )
 
-        hotels_info.append(message)
-    return hotels_info
+        if hotel.get('photos') is not None:
+            media = MediaGroup()
+            for num, photo in enumerate(hotel['photos']):
+                if num == 0:
+                    media.attach_photo(photo, caption=message)
+                else:
+                    media.attach_photo(photo)
+            await bot.send_media_group(chat_id=chat_id, media=media)
+
+        elif hotel.get('photos') is None:
+            await bot.send_message(chat_id, 'У Отеля нет фотографий', message)
 
 
 @logger.catch()
