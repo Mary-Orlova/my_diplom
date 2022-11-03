@@ -1,31 +1,15 @@
-from aiogram.types import Message
-from aiogram import Dispatcher
-from aiogram.dispatcher import FSMContext
-from aiogram.utils.callback_data import CallbackData
-# from states.status_info import HighpriceStatus
-# from information_API import hotels
-from loader import dp, bot
-# from config_data.config import DEFAULT_COMMANDS
-from loguru import logger
-
-lowhighprice_callback_data = CallbackData('lowhighprice', 'action', 'city_id')
-# @dp.message_handler(commands=["highprice"])
-# async def highprice(message: Message, state: FSMContext):
-@logger.catch()
-async def highprice(message: Message):
-    # await state.finish()
-    await message.answer('Вызвана команда высокой цены отеля')
-    # if not is_user_in_db(message):
-    #     add_user(message)
-    # chat_id = message.chat.id
-    # redis_db.hset(chat_id, 'state', 1)
-    # redis_db.hset(chat_id, 'order', 'PRICE_HIGHEST_FIRST')
-    logger.info('Команда "/highprice" была вызвана.')
-    # logging.info(redis_db.hget(chat_id, 'order'))
-    # state = redis_db.hget(chat_id, 'state')
-    # logging.info(f"Current state: {state}")
-    # await message.answer(chat_id)
+from states.status_info import HotelStatus
+from handlers.default_heandlers import bestdeal
 
 
-def register_handlers_highprice(dp: Dispatcher):
-    dp.register_message_handler(highprice, commands=['highprice'], state='*')
+def register_handlers_highprice(dp):
+    dp.register_message_handler(bestdeal.command_handler,
+                                commands=['lowprice', 'highprice', 'bestdeal'], state='*')
+    dp.register_message_handler(bestdeal.city_name_handler, state=HotelStatus.city)
+    dp.register_callback_query_handler(bestdeal.keyboard_handler, state=HotelStatus.city)
+    dp.register_callback_query_handler(bestdeal.callback_calendar, state=HotelStatus.check_in)
+    dp.register_callback_query_handler(bestdeal.callback_check_out, state=HotelStatus.check_out)
+    dp.register_message_handler(bestdeal.hotels_count_handler, state=HotelStatus.hotels_count)
+    dp.register_message_handler(bestdeal.get_photo_handler, state=HotelStatus.get_photo)
+    dp.register_message_handler(bestdeal.photo_count_handler, state=HotelStatus.photo_count)
+    dp.register_message_handler(bestdeal.get_requests, state=HotelStatus.photo_count)
