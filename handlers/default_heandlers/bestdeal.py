@@ -9,7 +9,7 @@ from keyboards.inline import answer, mycalendar
 
 def register_handlers_bestdeal(dp):
     dp.register_message_handler(command_handler,
-                                commands=['lowprice', 'hightprice', 'bestdeal'], state='*')
+                                commands=['lowprice', 'highprice', 'bestdeal'], state='*')
     dp.register_message_handler(city_name_handler, state=HotelStatus.city)
     dp.register_callback_query_handler(keyboard_handler, state=HotelStatus.city)
     dp.register_callback_query_handler(callback_calendar, state=HotelStatus.check_in)
@@ -27,12 +27,9 @@ def register_handlers_bestdeal(dp):
 @logger.catch()
 @dp.callback_query_handler(state=HotelStatus.check_in)
 async def callback_calendar(call: CallbackQuery, state: FSMContext) -> None:
-    """
-    Вызывается в случае получения запроса обратного вызова от
-    кнопок календаря telegram_bot_calendar
-    :param call: полученный результат от нажатия на календарь - дата выезда
-    :param state: HotelStatus.check_in
-    """
+    """ Вызывается в случае получения запроса обратного вызова от кнопок календаря telegram_bot_calendar.
+    :param call: полученный результат от нажатия на календарь - дата выезда;
+    :param state: HotelStatus.check_in. """
     logger.debug(f'Метод callback_calendar вызван')
     result, keyboard, step = await mycalendar.create_calendar(call, is_process=True)  # Создали новый календарь
 
@@ -54,9 +51,9 @@ async def callback_calendar(call: CallbackQuery, state: FSMContext) -> None:
 @logger.catch()
 @dp.callback_query_handler(state=HotelStatus.check_out)
 async def callback_check_out(call: CallbackQuery, state: FSMContext) -> None:
-    """Обработка установки даты отъезда
-    :param call: передается ответ от нажатия на клавиатуру пользователем - дата выезда
-    :param state: HotelStatus.check_out"""
+    """ Обработка установки даты отъезда.
+    :param call: передается ответ от нажатия на клавиатуру пользователем - дата выезда;
+    :param state: HotelStatus.check_out. """
     logger.info(f'Запущена функция обработки даты выезда check_out ')
     result, keyboard, step = await mycalendar.create_calendar(call, is_process=True)  # Создали новый календарь
 
@@ -75,18 +72,21 @@ async def callback_check_out(call: CallbackQuery, state: FSMContext) -> None:
             else:
                 state_data['check_out'] = result
         logger.debug(f'Записано состояние {HotelStatus.check_out} state_data["check_out"] = {result}')
-        await bot.send_message(chat_id, 'Минимальная цена за отель: ')
-        await HotelStatus.min_price.set()
+        async with state.proxy() as state_data:
+            if state_data.get('order') == "/bestdeal":
+                await bot.send_message(chat_id, 'Минимальная цена за отель: ')
+                await HotelStatus.min_price.set()
+            else:
+                await HotelStatus.hotels_count.set()
+                await bot.send_message(chat_id, 'Количество отелей к выводу в результате (не более 25): ')
 
 
 @logger.catch()
-@dp.callback_query_handler(state=HotelStatus.city)  # декоратор-хендлер для реализации обработки объекта запроса
+@dp.callback_query_handler(state=HotelStatus.city)  # декоратор для реализации обработки объекта запроса
 async def keyboard_handler(call: CallbackQuery, state: FSMContext) -> None:
-    """
-    Вызов клавиатуры
-    :param call: CallbackQuery
-    :param state: HotelStatus.city
-    """
+    """ Вызов клавиатуры.
+    :param call: CallbackQuery;
+    :param state: HotelStatus.city. """
     logger.info(f'Метод  keyboard_handler вызван (поиск и выбор города)')
     info = dict(call)
     chat_id = call.message.chat.id
@@ -102,7 +102,7 @@ async def keyboard_handler(call: CallbackQuery, state: FSMContext) -> None:
             state_data['city_name'] = str(loc_name)
             logger.debug(f'Записан город: {state_data["city_name"]}')
         logger.info('Был осуществлен переход из callbacks_handler в set_city_id')
-        await set_city_id(city_id, call.message, state=state)
+        await set_city_id(city_id, state=state)
         await bot.delete_message(chat_id, message_id=call.message.message_id)
         await bot.send_message(chat_id, f'Локация выбрана {loc_name}')
 
@@ -119,14 +119,12 @@ async def keyboard_handler(call: CallbackQuery, state: FSMContext) -> None:
 
 @logger.catch()
 async def command_handler(message: Message, state: FSMContext):
-    """Начальный метод обработчик состояний - устанавливает city
-    :param message: передано сообщение пользователя-команда
-    :param state: первичное состояние ддя команд bestdeal / lowprice/ hightprice
-    """
-    logger.info(f'Первичная команда для обработки bestdeal / lowprice/ hightprice.{state}, {message.text}')
+    """ Начальный метод обработчик состояний - устанавливает city.
+    :param message: передано сообщение пользователя-команда;
+    :param state: первичное состояние ддя команд bestdeal / lowprice/ hightprice. """
+    logger.info(f'Первичная команда для обработки  = {message.text}')
     async with state.proxy() as state_date:
-        if message.text == '/bestdeal':
-            state_date["order"] = 'DISTANCE_FROM_LANDMARK'
+        state_date['order'] = message.text
     await message.answer('В каком городе будем искать отель?')
     logger.info('Осуществлен переход из command_handler1 в city_name_input_handler')
     await HotelStatus.city.set()
@@ -134,9 +132,9 @@ async def command_handler(message: Message, state: FSMContext):
 
 @logger.catch()
 async def city_name_handler(message: Message, state: FSMContext) -> None:
-    """Обработка (city_id) ввода названия города - если похожих несколько, то уточняется город
-    :param message: передано введенное сообщение пользователя
-    :param state: состояние по городу"""
+    """ Обработка (city_id) ввода названия города - если похожих несколько, то уточняется город.
+    :param message: передано введенное сообщение пользователя;
+    :param state: состояние по городу. """
     if any(ext in message.text for ext in ['1234567890!#$%&*()+=/"`[]<>@№:;']):
         await message.answer('Имя города не должно содержать цифры или символы. Введите корректное имя города:')
         await command_handler(message, state=HotelStatus.city)
@@ -146,13 +144,11 @@ async def city_name_handler(message: Message, state: FSMContext) -> None:
 
 
 @logger.catch()
-async def set_city_id(city_id: str, message: Message, state: FSMContext) -> None:
-    """Обработка установки city_id для выбранного пользователем города
-    :param city_id: айди города в формате code+номер id
-    :param message: сообщение
-    :param state: обработка HotelStatus.city
-    """
-    logger.info(f'Запущен set_city_id, проверка айди города {city_id[4:]}')
+async def set_city_id(city_id: str, state: FSMContext) -> None:
+    """ Обработка установки city_id для выбранного пользователем города
+    :param city_id: id города в формате code+номер id
+    :param state: обработка HotelStatus.city. """
+    logger.info(f'Запущен set_city_id, проверка id города {city_id[4:]}')
     async with state.proxy() as state_data:
         state_data['city'] = str(city_id[4:])
     logger.debug(f'Записано состояние {HotelStatus.city} state_data["city"]= {str(city_id[4:])}')
@@ -160,11 +156,10 @@ async def set_city_id(city_id: str, message: Message, state: FSMContext) -> None
 
 @logger.catch()
 async def parametrs(parameters_name: str, message: Message, state: FSMContext) -> None:
-    """Обработка ввода цены и расстояния запроса поиска отеля (для минимальной и максимальной)
-    :param parameters_name:переданные параметры для проверки пользователем (MIN/MAX цена и MIN/MAX расстрояние)
-    :param message: сообщение переданое на обработку
-    :param state: преданное состояние
-    """
+    """ Обработка ввода цены и расстояния запроса поиска отеля (для минимальной и максимальной).
+    :param parameters_name:переданные параметры для проверки пользователем (MIN/MAX цена и MIN/MAX расстояние.)
+    :param message: сообщение переданое на обработку;
+    :param state: преданное состояние. """
     logger.debug(f'Запущен parametrs')
     parameter_str = message.text.strip()
 
@@ -177,7 +172,7 @@ async def parametrs(parameters_name: str, message: Message, state: FSMContext) -
                     logger.info(f'Изменено: MIN {state_data["min_price"]}, MAX {state_data["max_price"]}')
                 elif parameters_name == 'max_distance' and parameter <= int(state_data['min_distance']):
                     state_data['min_distance'], state_data['max_distance'] = parameter, state_data['min_distance']
-                    logger.info(f'Изменено: MINDIST {state_data["min_distance"]},MAXDIST {state_data["max_distance"]}')
+                    logger.info(f'Изменено: max_dis {state_data["min_distance"]}, min_dis {state_data["max_distance"]}')
                 else:
                     state_data[parameters_name] = parameter
             logger.info(f'Добавлен параметр {parameters_name} = parameter')
@@ -213,9 +208,8 @@ async def max_price_handler(message: Message, state: FSMContext) -> None:
 @logger.catch()
 @dp.message_handler(state=HotelStatus.min_distance)
 async def min_distance_handler(message: Message, state: FSMContext) -> None:
-    """Обработка ввода минимальной дистанции до центра
-    :param: message: минимальное расстоние до центра
-    """
+    """Обработка ввода минимальной дистанции до центра.
+    :param: message: минимальное расстояние до центра."""
     logger.info('Запущен min_distance_handler.')
     await parametrs('min_distance', message, state)
     await message.answer(f'Максимальное расстояние до центра: ')
@@ -250,16 +244,15 @@ async def hotels_count_handler(message: Message, state: FSMContext) -> None:
             await message.answer('Показывать фотографии отелей?', reply_markup=answer.yes_no)
     except ValueError:
         await message.answer('Ошибка ввода. Можно вывести от 1-25 отелей включительно.')
-        logger.exception('Поймано исключение - не коректный ввод количества отелей (от 1 -25 включительно).')
+        logger.exception('Поймано исключение - не корректный ввод количества отелей (от 1 -25 включительно).')
 
 
 @logger.catch()
 @dp.message_handler(state=HotelStatus.get_photo)
 async def get_photo_handler(message: Message, state: FSMContext) -> None:
-    """Обработка ввода ответа на запрос ввывода фотографий отеля
-    :param message: Ответ на вопрос показывать ли фотографии отелей
-    :param state: HotelStatus.get_photo
-    """
+    """Обработка ввода ответа на запрос вывода фотографий отеля.
+    :param message: Ответ на вопрос показывать ли фотографии отелей;
+    :param state: HotelStatus.get_photo."""
     logger.info('Запущен get_photo_handler')
     get_photo_str = message.text.strip().lower()
     async with state.proxy() as state_data:
@@ -297,22 +290,22 @@ async def photo_count_handler(message: Message, state: FSMContext) -> None:
 
 @logger.catch()
 async def get_requests(message: Message, state: FSMContext) -> None:
-    """Обработка отправки запроса пользователя по отелю и обработка ответа API
-    :param message: итоговый метод обработки и получения списка отелей со всей информацией по запросу
-    :param state передача состояний
-    """
+    """ Обработка отправки запроса пользователя по отелю и обработка ответа API.
+    :param message: итоговый метод обработки и получения списка отелей со всей информацией по запросу;
+    :param state передача состояний. """
     async with state.proxy() as data:
-        if data.get('order') == 'DISTANCE_FROM_LANDMARK':
-            command = '/bestdeal'
-    async with state.proxy() as data:
-        text = f'Команда: {command}' \
+        text = f'Команда: {data["order"]}' \
                f'\nГород: {data["city_name"]}' \
                f'\nКоличество отелей: {data["hotels_count"]}'\
                 f'\nПоказывать фотографию: {data["get_photo"]}'\
-                f'\nКоличество-фотографий: {data["photo_count"]}'\
                 f'\nДата заезда: {data["check_in"]}'\
                 f'\nДата выезда: {data["check_out"]}'\
-                f'\nМинимальная цена: {data["min_price"]}'\
+
+        if data.get('get_photo') == 'да':
+            text += f'\nКоличество-фотографий: {data["photo_count"]}'\
+
+        if data.get("order") == '/bestdeal':
+            text += f'\nМинимальная цена: {data["min_price"]}'\
                 f'\nМаксимальная цена: {data["max_price"]}'\
                 f'\nМинимальная дистанция от центра: {data["min_distance"]}'\
                 f'\nМаксимальная дистанция от центра: {data["max_distance"]}'
