@@ -6,39 +6,30 @@ from aiogram.types import Message, MediaGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger
-from loader import dp, bot
+from loader import bot
 from states.status_info import HotelStatus
+from database import base as db_hotels
 
 
 @logger.catch()
 def delete_tags(html_text: str) -> str:
-    """Метод удаления тегов - работа с html-текстом
-    :param html_text: html
-    Возвращает текст из найденной информации API"""
+    """ Метод удаления тегов - работа с html-текстом.
+    :param html_text: html;
+    Возвращает текст из найденной информации API."""
     text = re.sub('<([^<>]*)>', '', html_text)
     return text
 
 
 @logger.catch()
-def request_locations(msg: Message) -> dict:
-    """Метод обработки локации
-    param msg: сообщение
-    Возвращает словарь
-    """
-
-    url = "https://hotels4.p.rapidapi.com/locations/search"
-
-    querystring = {
-        "query": msg.text.strip(),
-        "locale": (msg.chat.id, 'locale'),
-        }
+def request_to_api(url: str, querystring: any) -> dict:
+    """ Метод для работы с АПИ.
+    :paramL url: адрес;
+    :param querystring: параметры запроса для поиска информации с АПИ."""
 
     headers = {
         'x-rapidapi-key': RAPID_API_KEY,
         'x-rapidapi-host': "hotels4.p.rapidapi.com"
         }
-    logger.info(f'Параметры поиска: {querystring}')
-
     try:
         response = requests.request("GET", url, headers=headers, params=querystring, timeout=40)
         data = response.json()
@@ -55,12 +46,29 @@ def request_locations(msg: Message) -> dict:
 
 
 @logger.catch()
+def request_locations(msg: Message) -> dict:
+    """ Метод обработки локации.
+    :param msg: сообщение;
+    Возвращает словарь."""
+
+    url = "https://hotels4.p.rapidapi.com/locations/search"
+
+    querystring = {
+        "query": msg.text.strip(),
+        "locale": (msg.chat.id, 'locale'),
+        }
+
+    logger.info(f'Параметры поиска: {querystring}')
+
+    data = request_to_api(url, querystring)
+    return data
+
+
+@logger.catch()
 def make_locations_list(msg: Message) -> dict:
-    """
-    Получает данные из ответа API отеля и создает словарь
-    :param msg: сообщение
-    Возвращается словарь локальное имя - локальный ID
-    """
+    """ Получает данные из ответа API отеля и создает словарь.
+    :param msg: сообщение;
+    Возвращается словарь локальное имя - локальный ID."""
     data = request_locations(msg)
     if not data:
         return {'bad_request': 'bad_request'}
@@ -79,10 +87,8 @@ def make_locations_list(msg: Message) -> dict:
 
 @logger.catch()
 async def get_locations(msg: Message) -> None:
-    """
-    Получает имя локации и ищет локации с похожим названием и отправляет результат
-    :param msg: сообщение c названием искомого города для поиска отеля
-    """
+    """ Получает имя локации и ищет локации с похожим названием и отправляет результат.
+    :param msg: сообщение c названием искомого города для поиска отеля. """
     locations = make_locations_list(msg)
     if not locations or len(locations) < 1:
         await bot.send_message(msg.chat.id, 'К сожалению, локация не найдена')
@@ -102,12 +108,11 @@ async def get_locations(msg: Message) -> None:
 
 @logger.catch()
 async def exact_location(dates: dict, loc_id: str) -> str:
-    """
-    Получает id выбранной локации и возвращает имя локации из словаря
-    :param dates: словарь сообщения, где содержится code+id города и название
-    :param loc_id: id локации
-    Возвращает локальное имя
-    """
+    """ Получает id выбранной локации и возвращает имя локации из словаря.
+    :param dates: словарь сообщения, где содержится code+id города и название;
+    :param loc_id: id локации;
+    Возвращает локальное имя."""
+
     logger.info(f"Запущена функция exact_location")
     for loc in dates['message']['reply_markup']['inline_keyboard']:
         if loc[0]['callback_data'] == loc_id:
@@ -117,29 +122,39 @@ async def exact_location(dates: dict, loc_id: str) -> str:
 
 @logger.catch()
 async def get_hotels(msg: Message, state: FSMContext) -> [list, None]:
-    """
-    Вызов необходимых функций для получения и обработки данных об отеле
-    :param msg: сообщение последнее пользователя (состояние)
-    :param state: параметры поиска в формате машины состояний
-    Возвращает список (строки) с описанием отеля
-    """
+    """ Вызов необходимых функций для получения и обработки данных об отеле.
+    :param msg: сообщение последнее пользователя (состояние);
+    :param state: параметры поиска в формате машины состояний;
+    Возвращает список (строки) с описанием отеля. """
     logger.debug(f'Запущен get_hotels')
 
     async with state.proxy() as state_data:
+        if state_data.get('order') == '/bestdeal':
+            state_data['order'] = 'DISTANCE_FROM_LANDMARK'
+        elif state_data.get('order') == '/highprice':
+            state_data['order'] = 'PRICE_HIGHEST_FIRST'
+        else:
+            state_data['order'] = 'PRICE'
         parameters = {
             'command': state_data.get('order'),
             'city_id': state_data.get('city'),
             'city_name': state_data.get('city_name'),
             'hotels_count': state_data.get('hotels_count'),
             'get_photo': state_data.get('get_photo'),
-            'photo_count': state_data.get('photo_count'),
             'check_in': state_data.get('check_in').strftime("%Y-%m-%d"),
-            'check_out': state_data.get('check_out').strftime("%Y-%m-%d"),
-            'min_price': state_data.get('min_price'),
-            'max_price': state_data.get('max_price'),
-            'min_distance': state_data.get('min_distance'),
-            'max_distance': state_data.get('max_distance'),
+            'check_out': state_data.get('check_out').strftime("%Y-%m-%d")
         }
+
+        if state_data.get('get_photo') == "да":
+            parameters['photo_count'] = state_data.get('photo_count')
+
+        if state_data.get('order') == 'DISTANCE_FROM_LANDMARK':
+            parameters['min_price'] = state_data.get('min_price')
+            parameters['max_price'] = state_data.get('max_price')
+            parameters['min_distance'] = state_data.get('min_distance')
+            parameters['max_distance'] = state_data.get('max_distance')
+            minimum, maximum = parameters['min_distance'], parameters['max_distance']
+
     out_hotel = str(parameters['check_out']).split('-')
     in_hotel = str(parameters['check_in']).split('-')
     out_hotel_day = datetime.date(int(out_hotel[0]), int(out_hotel[1]), int(out_hotel[2]))
@@ -150,29 +165,29 @@ async def get_hotels(msg: Message, state: FSMContext) -> [list, None]:
     data = request_hotels(parameters)  # возвращается ответ по информации АПИ
     if 'bad_req' in data:
         return ['bad_request']
-    command = parameters['command']
-    hotel_count, photo = int(parameters['hotels_count']), int(parameters['photo_count'])
-    minimum, maximum = parameters['min_distance'], parameters['max_distance']
-    data = structure_hotels_info(data, command, minimum, maximum, hotel_count, photo)
+
+    logger.debug(f'{parameters}')
+    data = structure_hotels_info(data, parameters)
+
     if not data or len(data['results']) < 1:
         return None
-    if parameters['command'] == 'DISTANCE_FROM_LANDMARK':
+    if parameters['command'] == '/bestdeal':
         quantity = int(parameters['hotels_count'])
         data = choose_best_hotels(hotels=data['results'], distance=maximum, limit=quantity)
     else:
         data = data['results']
         logger.debug(f'В блоке ELSE data = {data}')
-    await generate_hotels_descriptions(data, night, msg)
+    command = parameters['command']
+    city = parameters['city_name']
+    await generate_hotels_descriptions(data, night, msg, command, city)
 
 
 @logger.catch()
 def request_hotels(parameters: dict, page: int = 1):
-    """
-    Регистрация информауии из API по отелям request information from the hotel api
-    :param parameters: В параметры передаются параметры поиска
-    :param page: Номер страницы
-    Возвращается информация из API
-    """
+    """ Регистрация информации из API по отелям request information from the hotel api.
+    :param parameters: В параметры передаются параметры поиска;
+    :param page: Номер страницы;
+    Возвращается информация из API."""
     logger.info(f'Метод request_hotels был вызван с параметрами: {parameters} и номером стр = {page}')
     url = "https://hotels4.p.rapidapi.com/properties/list"
 
@@ -193,46 +208,33 @@ def request_hotels(parameters: dict, page: int = 1):
         querystring['sortOrder'] = 'DISTANCE_FROM_LANDMARK'
         querystring['distance'] = float(parameters['max_distance'])
 
+    elif parameters['command'] == 'PRICE_HIGHEST_FIRST':
+        querystring['sortOrder'] = 'PRICE_HIGHEST_FIRST'
+
     logger.info(f'Параметры поиска {querystring}')
 
-    headers = {
-        'x-rapidapi-key': RAPID_API_KEY,
-        'x-rapidapi-host': "hotels4.p.rapidapi.com"
-    }
-
-    try:
-        response = requests.request("GET", url, headers=headers, params=querystring, timeout=40)
-        data = response.json()
-        if data.get('message'):
-            raise requests.exceptions.RequestException
-        logger.info(f'Получен ответ API по отелям REQUESTHOTELS')
-        return data
-
-    except requests.exceptions.RequestException as critical_error:
-        logger.error(f'Возникла ошибка при получении ответа: {critical_error}')
-        return {'bad_req': 'bad_req'}
-    except Exception as error:
-        logger.exception(f'Ошибка в функции request_hotels: {error}')
-        return {'bad_req': 'bad_req'}
+    data = request_to_api(url, querystring)
+    return data
 
 
 @logger.catch()
-def structure_hotels_info(data: dict, command: str,
-                          minimum: str, maximum: str, hotel_count: int, photo: int) -> dict:
-    """
-    Структурирование данных по отелям
-    :param data: данные по отелям в виде словаря
-    :param command: команда пользователя
-    :param minimum: минимальное расстояние до центра
-    :param maximum: максимальное расстояние до центра
-    :param hotel_count: кол-во отелей
-    :param photo: кол-во фотографи отеля
-    Возвращаются данные в виде словаря по отелям
-    """
+def structure_hotels_info(data: dict, parameters: dict) -> dict:
+    """ Структурирование данных отеля.
+    :param data: данные по отелям в виде словаря;
+    :param parameters: запросы пользователя по поиску отеля;
+    Возвращаются данные в виде словаря по отелям. """
     logger.info(f'Метод structure_hotels_info был вызван')
     data = data.get('data', {}).get('body', {}).get('searchResults')
-    hotels = dict()
+    command = parameters['command']
+    hotel_count = int(parameters['hotels_count'])
 
+    if command == 'DISTANCE_FROM_LANDMARK':
+        minimum = parameters['min_distance']
+        maximum = parameters['max_distance']
+    if parameters['get_photo'] == 'да':
+        photo = int(parameters.get('photo_count'))
+
+    hotels = dict()
     hotels['Общее количество'] = data.get('totalCount', 0)
     logger.info(f"next_page: {data.get('pagination', {}).get('nextPageNumber', 0)}")
     hotels['next_page'] = data.get('pagination', {}).get('nextPageNumber')
@@ -253,7 +255,7 @@ def structure_hotels_info(data: dict, command: str,
                     center = hotel['distance'].strip('').replace(',', '.').split()[0]
                     hotel['address'] = hotel_address(cur_hotel)
                     hotel['ref'] = get_hotel_ref(cur_hotel.get('id'))
-                    if photo > 0:
+                    if parameters['get_photo'] == 'да' and photo > 0:
                         hotel['photos'] = photos(cur_hotel, photo)
                     if hotel not in hotels['results'] and command != 'DISTANCE_FROM_LANDMARK':
                         hotels['results'].append(hotel)
@@ -275,29 +277,26 @@ def structure_hotels_info(data: dict, command: str,
 
 @logger.catch()
 def choose_best_hotels(hotels: list[dict], distance: float, limit: int) -> list[dict]:
-    """
-    Вывод результата отелей в виде списка
-    :param hotels: словарь отелей
-    :param distance: диапазон расстояния, на котором находится отель от центра.
-    :param limit: кол-ва отелей (выбранным пользователь)
-    """
+    """ Вывод результата отелей в виде списка.
+    :param hotels: словарь отелей;
+    :param distance: диапазон расстояния, на котором находится отель от центра;
+    :param limit: кол-ва отелей (выбранным пользователь). """
 
     logger.info(f'choose_best_hotels  вызвана с аргументами: дистанция = {distance}, отелей = {limit}\n{hotels}')
     hotels = list(filter(lambda x: float(x["distance"].strip('').replace(',', '.').split()[0]) <= distance, hotels))
     logger.info(f'Отфильтровали отели по дистанции {hotels}')
-    # hotels = sorted(hotels, key=lambda k: k["price"])
-    # logger.info(f'\nОтели отсортированы: {hotels}')
     return hotels
 
 
 @logger.catch()
-async def generate_hotels_descriptions(hotels: dict, night: str, msg: Message) -> list[str]:
-    """
-    Метод получения описания отеля
-    :param hotels: информация об отеле
-    :param night: кол-во ночей в отеле
-    Возвращает список (строки) с описанием отеля
-    """
+async def generate_hotels_descriptions(hotels: dict, night: str, msg: Message, command: tuple, city: str) -> None:
+    """ Метод получения описания отеля.
+    :param hotels: информация об отеле;
+    :param night: кол-во ночей в отеле;
+    :param msg: сообщение;
+    :param command: команда пользователя;
+    :param city: выбранный город;
+    Возвращает список (строки) с описанием отеля. """
     logger.info(f'Метод generate_hotels_descriptions был вызван')
 
     chat_id = msg.chat.id
@@ -323,6 +322,9 @@ async def generate_hotels_descriptions(hotels: dict, night: str, msg: Message) -
             f" Цена за все время: {all_current}\n"
             f" Ссылка: {hotel.get('ref')}\n"
         )
+        user_id = int(msg.from_user.id)
+        date = datetime.datetime.now()
+        user_info = (user_id, date, command, city)
 
         if hotel.get('photos') is not None:
             media = MediaGroup()
@@ -332,16 +334,18 @@ async def generate_hotels_descriptions(hotels: dict, night: str, msg: Message) -
                 else:
                     media.attach_photo(photo)
             await bot.send_media_group(chat_id=chat_id, media=media)
+            db_hotels.add_in_db(user_info, list(hotel['photos'], message))
 
         elif hotel.get('photos') is None:
-            await bot.send_message(chat_id, 'У Отеля нет фотографий', message)
+            await bot.send_message(chat_id, message)
+            db_hotels.add_in_db(user_info, list(message))
 
 
 @logger.catch()
 def hotel_price(hotel: dict) -> int:
-    """ Возвращает стоимость отеля
-    :param hotel: словарь по отелю
-    Возвращает стоимость за отель"""
+    """ Возвращает стоимость отеля.
+    :param hotel: словарь по отелю;
+    Возвращает стоимость за отель."""
     price = 0
     try:
         if hotel.get('ratePlan').get('price').get('exactCurrent'):
@@ -358,10 +362,10 @@ def hotel_price(hotel: dict) -> int:
 
 @logger.catch()
 def hotel_address(hotel: dict) -> str:
-    """ Метод получения адреса отеля
-    :param hotel: словарь по отелю
-    Возвращает адрес отеля"""
-    message = f'Информация об адресе отеля отсутствует'
+    """ Метод получения адреса отеля.
+    :param hotel: словарь по отелю.
+    Возвращает адрес отеля."""
+    message = f'Информация об адресе отеля отсутствует.'
     if hotel.get('address'):
         message = hotel.get('address').get('streetAddress', message)
     return message
@@ -369,30 +373,27 @@ def hotel_address(hotel: dict) -> str:
 
 @logger.catch()
 def get_hotel_ref(hotel_id) -> str:
-    """Возвращает ссылку на отель """
+    """ Возвращает ссылку на отель. """
     return f'https://hotels.com/ho{hotel_id}'
 
 
 @logger.catch()
 def hotel_rating(rating: float) -> str:
-    """ Метод поиска рейтинга отеля
-    :param rating: рейтинг из информации по отелю
-    Возвращает рейтинг отеля """
+    """ Метод поиска рейтинга отеля.
+    :param rating: рейтинг из информации по отелю;
+    Возвращает рейтинг отеля."""
     if not rating:
         return 'Информация о рейтинге отеля отсутствует'
     return '⭐' * int(rating)
 
 
 def photos(hotel: dict, photo_count: int):
-    """ Получение фото отеля"""
+    """ Получение фото отеля.
+    :param hotel: данные по отелю;
+    :param photo_count: кол-во фотографий."""
     url = "https://hotels4.p.rapidapi.com/properties/get-hotel-photos"
     querystring = {"id": hotel.get('id')}
-    headers = {
-        'x-rapidapi-key': RAPID_API_KEY,
-        'x-rapidapi-host': "hotels4.p.rapidapi.com"
-    }
-    response = requests.request("GET", url, headers=headers, params=querystring)
-    photos = response.json()
+    photos = request_to_api(url, querystring)
     hotel['photos'] = []
 
     # Проверка наличия фото отеля
