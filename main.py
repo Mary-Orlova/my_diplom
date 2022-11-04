@@ -1,9 +1,7 @@
-import database.base
 from loader import dp
 from loguru import logger
 from aiogram import executor
 from utils.set_bot_commands import set_default_commands
-import database
 # импорт файлов для их дальнейшей регистрации (хэндлеры)
 from handlers.default_heandlers import start, help, hello_world, lowprice, highprice, bestdeal, history, echo
 
@@ -11,7 +9,7 @@ from handlers.default_heandlers import start, help, hello_world, lowprice, highp
 logger.add('debug.log', format='{time} {level} {message}', level='INFO', rotation='1000KB', compression='zip')
 
 
-# уведомление в терминал -при успешном запуске бота + подгружает все команды
+# уведомление в терминал при успешном запуске бота + подгружает все команды
 @logger.catch()
 async def on_startup(_):
     print('\n=== Телеграм-бот вышел в онлайн ===')
@@ -23,7 +21,6 @@ async def on_startup(_):
     bestdeal.register_handlers_bestdeal(dp)
     history.register_handlers_history(dp)
     echo.register_handlers_echo(dp)
-    # database.base.add_in_db()
     await set_default_commands(dp)
 
 
