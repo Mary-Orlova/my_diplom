@@ -129,6 +129,7 @@ async def get_hotels(msg: Message, state: FSMContext) -> [list, None]:
     logger.debug(f'Запущен get_hotels')
 
     async with state.proxy() as state_data:
+        command_bot = state_data.get('order')
         if state_data.get('order') == '/bestdeal':
             state_data['order'] = 'DISTANCE_FROM_LANDMARK'
         elif state_data.get('order') == '/highprice':
@@ -177,9 +178,9 @@ async def get_hotels(msg: Message, state: FSMContext) -> [list, None]:
     else:
         data = data['results']
         logger.debug(f'В блоке ELSE data = {data}')
-    command = parameters['command']
+
     city = parameters['city_name']
-    await generate_hotels_descriptions(data, night, msg, command, city)
+    await generate_hotels_descriptions(data, night, msg, command_bot, city)
 
 
 @logger.catch()
@@ -334,7 +335,9 @@ async def generate_hotels_descriptions(hotels: dict, night: str, msg: Message, c
                 else:
                     media.attach_photo(photo)
             await bot.send_media_group(chat_id=chat_id, media=media)
-            db_hotels.add_in_db(user_info, list(hotel['photos'], message))
+            all = hotel['photos']
+            all.append(message)
+            db_hotels.add_in_db(user_info, all)
 
         elif hotel.get('photos') is None:
             await bot.send_message(chat_id, message)
