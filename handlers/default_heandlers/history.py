@@ -17,7 +17,8 @@ async def history(message: Message) -> None:
     logger.info(f'Команда /history была вызвана, id = {message.from_user.id}')
     user_id = int(message.from_user.id)
     limit = '10'
-    db_hotels.show_history(user_id, limit)
+    history_info = db_hotels.show_history(user_id, limit)
+    await message.answer(str(history_info))
 
 
 @logger.catch()
