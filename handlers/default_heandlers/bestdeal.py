@@ -161,7 +161,9 @@ async def parametrs(parameters_name: str, message: Message, state: FSMContext) -
     :param message: сообщение переданое на обработку;
     :param state: преданное состояние. """
     logger.debug(f'Запущен parametrs')
-    parameter_str = message.text.strip()
+
+    parameter_str = message.text
+    logger.debug(f'{parameter_str}')
 
     try:
         parameter = int(parameter_str)
@@ -171,24 +173,44 @@ async def parametrs(parameters_name: str, message: Message, state: FSMContext) -
                     state_data['min_price'], state_data['max_price'] = parameter, state_data['min_price']
                     logger.info(f'Изменено: MIN {state_data["min_price"]}, MAX {state_data["max_price"]}')
                 elif parameters_name == 'max_distance' and parameter <= int(state_data['min_distance']):
-                    state_data['min_distance'], state_data['max_distance'] = parameter, state_data['min_distance']
-                    logger.info(f'Изменено: max_dis {state_data["min_distance"]}, min_dis {state_data["max_distance"]}')
+                    state_data['min_distance'], state_data['max_distance'] = parameter, state_data[
+                                'min_distance']
+                    logger.info(
+                            f'Изменено: max_dis {state_data["min_distance"]}, min_dis {state_data["max_distance"]}')
                 else:
                     state_data[parameters_name] = parameter
             logger.info(f'Добавлен параметр {parameters_name} = parameter')
             await HotelStatus.next()
     except ValueError:
         logger.exception('Поймано исключение - ошибка ввода пользователя для обработки параметров цены отеля')
-        parameters_name = await message.answer('Ошибка в вводе цены - укажите целое число больше 0')
+        await message.answer('Ошибка в вводе - укажите целое число больше 0')
+
+    # try:
+    #     parameter = int(parameter_str)
+    #     if parameter >= 0:
+    #         async with state.proxy() as state_data:
+    #             if parameters_name == 'max_price' and parameter <= int(state_data['min_price']):
+    #                 state_data['min_price'], state_data['max_price'] = parameter, state_data['min_price']
+    #                 logger.info(f'Изменено: MIN {state_data["min_price"]}, MAX {state_data["max_price"]}')
+    #             elif parameters_name == 'max_distance' and parameter <= int(state_data['min_distance']):
+    #                 state_data['min_distance'], state_data['max_distance'] = parameter, state_data['min_distance']
+    #                 logger.info(f'Изменено: maxdis {state_data["min_distance"]}, mindis {state_data["max_distance"]}')
+    #             else:
+    #                 state_data[parameters_name] = parameter
+    #         logger.info(f'Добавлен параметр {parameters_name} = parameter')
+    #         await HotelStatus.next()
+    # except ValueError:
+    #     logger.exception('Поймано исключение - ошибка ввода пользователя для обработки параметров цены отеля')
+    #     parameters_name = await message.answer('Ошибка в вводе  - укажите целое число больше 0')
 
 
 @logger.catch()
 @dp.message_handler(state=HotelStatus.min_price)
 async def min_price_handler(message: Message, state: FSMContext) -> None:
-    """Обрабатывает дату выезда из отеля и запрашивает цену минимальную за отель
+    """Обрабатывает минимальную цену за отель.
     :param message: дата выезда
     :param state: HotelStatus.min_price"""
-    logger.info(f'Запущен min_price_handler, message.text= {message.text}, message.message_id={message.message_id}')
+    logger.info(f'Запущен min_price_handler, message.text= {message.text}')
     await parametrs('min_price', message, state)
     await message.answer('Максимальная цена за отель: ')
 
@@ -236,7 +258,7 @@ async def hotels_count_handler(message: Message, state: FSMContext) -> None:
     """
     logger.info('Запущен hotels_count_handler.')
     try:
-        if int(message.text) <= 25:
+        if 0 < int(message.text) <= 25:
             async with state.proxy() as state_date:
                 state_date['hotels_count'] = message.text
             logger.debug(f'Установлено {HotelStatus.hotels_count}  state_date[hotel_count] = {message.text}')
@@ -285,6 +307,7 @@ async def photo_count_handler(message: Message, state: FSMContext) -> None:
                          f'state_data["photo_count"]= {photo_count}')
             await get_requests(message, state)
     except ValueError:
+        logger.debug('Поймано исключение - недопустимый ввод значения количества фотографий.')
         await message.answer('Допустим ввод только целых чисел от 1 до 5 включительно.')
 
 
