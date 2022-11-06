@@ -315,13 +315,13 @@ async def generate_hotels_descriptions(hotels: dict, night: str, msg: Message, c
         logger.info(f'ЗА НОЧЬ{current_day} ОБЩАЯ ЦЕНА{all_current}')
 
         message = str(
-            f" Отель: {hotel.get('name')}\n"
+            f"\nОтель: {hotel.get('name')}\n"
             f" Рейтинг: {hotel_rating(hotel.get('star_rating'))}\n"
             f" Адрес: {hotel.get('address')}\n"
             f" Расположенность от центра: {hotel.get('distance')}\n"
             f" Цена за 1 ночь: {current_day}\n"
             f" Цена за все время: {all_current}\n"
-            f" Ссылка: {hotel.get('ref')}\n"
+            f" Ссылка: {hotel.get('ref')}"
         )
         user_id = int(msg.from_user.id)
         date = datetime.datetime.now()
@@ -335,9 +335,9 @@ async def generate_hotels_descriptions(hotels: dict, night: str, msg: Message, c
                 else:
                     media.attach_photo(photo)
             await bot.send_media_group(chat_id=chat_id, media=media)
-            all = hotel['photos']
-            all.append(message)
-            db_hotels.add_in_db(user_info, all)
+            all_photo = hotel['photos']
+            all_photo.append(message)
+            db_hotels.add_in_db(user_info, all_photo)
 
         elif hotel.get('photos') is None:
             await bot.send_message(chat_id, message)
