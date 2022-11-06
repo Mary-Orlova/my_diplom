@@ -48,16 +48,20 @@ def add_in_db(user_info: Tuple, hotels: List[Tuple]) -> None:
 
 
 @logger.catch()
-def show_history(user_id: int, limit: str) -> List:
+def show_history(user_id: int) -> List:
     """ Функция вывода истории пользователя из БД.
     :param user_id: id пользователя;
-    :param limit: последние 10;
     возвращает: историю пользователя. """
     with sqlite3.connect("hotels.db") as connect:
         cursor = connect.cursor()
-        result = """SELECT date, command, city, hotels FROM users WHERE user_id = ? ORDER BY date DESC LIMIT = ?"""
-        information = cursor.execute(result, (user_id, limit,))
-    return information.fetchall()
+        valid = cursor.execute(f"""SELECT * FROM users WHERE user_id={user_id}""")
+        if valid:
+            result = cursor.execute(f"""SELECT date, command, city, hotels
+                                        FROM users WHERE user_id = {user_id} ORDER BY date DESC LIMIT 10""")
+        else:
+            result = 'История поиска пуста.'
+            logger.info('Пользователь вводил команду /history, но история в БД отсутствует.')
+    return result.fetchall()
 
 
 @logger.catch()
@@ -66,5 +70,6 @@ def delete_history(id_string):
     :param id_string: id пользователя. """
     with sqlite3.connect("hotels.db") as connect:
         cursor = connect.cursor()
-        cursor.execute("""DELETE from users WHERE id = ?""", (id_string,))
+        cursor.execute(f"""DELETE from users WHERE user_id = {id_string}""")
+        connect.commit()
     logger.info('Пользователь удалил историю.')
