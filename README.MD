@@ -50,7 +50,7 @@ logger.add('debug.log', format='{time} {level} {message}', level='INFO', rotatio
 ￼
 <image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.47.png" alt="Подсказки-команд">
 
-![Image alt](https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.54.png)
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.54.png" alt="Подсказки-команд2">
 
 Команда поиска лучших предложений (возможность выбора минимальной/максимальной цены/дистанции).
 
@@ -62,15 +62,15 @@ logger.add('debug.log', format='{time} {level} {message}', level='INFO', rotatio
 
 3 Уточните локацию из предложенного списка.
 
-![Image alt](https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.25.png)
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.25.png" alt="Уточнение локации">
 
 4 Выбор даты заезда осуществляется по календарю - минимальная дата сегодняшний день.
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.32.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.32.png" alt="Выбор года">
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.45.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.45.png" alt="Выбор месяца">
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.59.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.59.png" alt="Выбор дня">
 
 5 Аналогично выводится календарь и для даты отъезда (если дата отъезда проставлена раньше, чем дата заезда - они меняются местами).
 
@@ -92,46 +92,46 @@ logger.add('debug.log', format='{time} {level} {message}', level='INFO', rotatio
 
 _Если введен не корректный ответ на вопрос о выводе фотографий - засчитывается как вывод без фотографий отеля._
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.26.51.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.26.51.png" alt="Пример проверки данных">
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.27.08.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.27.08.png" alt="Пример проверки данных 2">
 
 12 После собранных запросов пользователя в чат направляются полученные параметры и уведомление о начале поиска.
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.27.27.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.27.27.png" alt="Вывод параметров пользователя">
 
 13 В случае успешного поиска сообщается кол-во подходящий найденных отелей и публикуется запрошенная информация.
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.28.56.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.28.56.png" alt="Вывод результата пользователю">
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.03.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.03.png" alt="Вывод результатов пользователю 2">
 
 #Команда поиска ТОП отелей (дорогие).
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.32.08.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.32.08.png" alt="Пример команды /highprice">
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.32.20.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.32.20.png" alt="Пример вывода /highprice">
 
 #Команда поиска ТОП отелей (бюджетные).
 ￼
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.31.11.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.31.11.png" alt="Пример команды /lowprice">
 
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.31.17.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.31.17.png" alt="Пример вывода команды /lowprice">
 
 #Запись в БД осуществляется после получения всех данных в методе  generate_hotels_descriptions (information_API -> hotels)
 ￼
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2015.28.40.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2015.28.40.png" alt="Пример базы данных">
 
 #Команда вывода истории пользователя по поиску отелей (лимит: последние 10).
 
 При вызове /history - обращение к database
-￼
-![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.26.png]
+
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.26.png" alt="История пользователя">
 
 #Команда удаления истории пользователя (не вынесена в подсказки пользователю, чтобы избежать случайного удаления записей).
 
 По команде /delete_history удаляются строки из БД по id-пользователя.
 Если строки отсутствуют - выводится соответствующее сообщение.
 
-￼![https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.30.20.png]
+<image src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.30.20.png" alt="Удаление истории пользователя">
 
