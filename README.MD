@@ -108,25 +108,30 @@ _Если введен не корректный ответ на вопрос о
 
 #Команда поиска ТОП отелей (дорогие).
 
+
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.32.08.png" width="500">
 
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.32.20.png" width="500">
 
 #Команда поиска ТОП отелей (бюджетные).
 ￼
+
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.31.11.png" width="500">
 
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.31.17.png" width="500">
 
 #Запись в БД осуществляется после получения всех данных в методе  generate_hotels_descriptions (information_API -> hotels)
+
 ￼
-<img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2015.28.40.png" width="500">
+<img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2015.28.40.png" width="800">
+
 
 #Команда вывода истории пользователя по поиску отелей (лимит: последние 10).
 
 При вызове /history - обращение к database
 
-<img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.26.png"" width="500">
+<img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.26.png" width="500">
+
 
 #Команда удаления истории пользователя (не вынесена в подсказки пользователю, чтобы избежать случайного удаления записей).
 
