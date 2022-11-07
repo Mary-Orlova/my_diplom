@@ -34,8 +34,8 @@ def add_in_db(user_info: Tuple, hotels: List[Tuple]) -> None:
     total_hotels = ''
     for i in hotels:
         hotel = ''
-        hotel += str(i) + '%'
-        total_hotels += hotel + '\t\t'
+        hotel += str(i)
+        total_hotels += hotel
     user_info = list(user_info)
     user_info.append(total_hotels)
 
