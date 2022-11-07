@@ -62,15 +62,15 @@ logger.add('debug.log', format='{time} {level} {message}', level='INFO', rotatio
 
 3 Уточните локацию из предложенного списка.
 
-![]https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.25.png)
+![](https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.25.png)
 
 4 Выбор даты заезда осуществляется по календарю - минимальная дата сегодняшний день.
 
-![]https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.32.png)
+![](https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.32.png)
 
-![]https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.45.png)
+![](https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.45.png)
 
-![]https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.59.png)
+![](https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.25.59.png)
 
 5 Аналогично выводится календарь и для даты отъезда (если дата отъезда проставлена раньше, чем дата заезда - они меняются местами).
 
