@@ -1,11 +1,11 @@
-#Поиск отелей в telegram 
+**Поиск отелей в telegram **
 
 
 Telegram-бот для анализа сайта Hotels.com и поиска подходящих пользователю отелей: https://t.me/journey_hotels_bot
 
 
 
-#§Требования 
+**Требования **
 
 Автоматически можно установить все необходимые зависимости по клику на предложение от PyCharm или выполнив команду в терминале: pip install -r requirements.txt
 
@@ -18,14 +18,14 @@ Telegram-бот для анализа сайта Hotels.com и поиска п
 ⚐ loguru==0.6.0
 
 
-#Логирование
+**Логирование**
 
 Используется библиотека loguru, уровень логов задается в файле main.py
 
 from loguru import logger
 logger.add('debug.log', format='{time} {level} {message}', level='INFO', rotation='1000KB', compression='zip')
 
-Команды бота
+**Команды бота**
 ✎ /start  - Запуск бота /приветствие по имени.
 
 ✎ /hello_world - Команда приветствия, сообщает пользователю о том, что он создан для поиска отелей и рекомендует запустить команду /help.
@@ -44,7 +44,7 @@ logger.add('debug.log', format='{time} {level} {message}', level='INFO', rotatio
 
 
 
-#Пример работы с ботом
+**Пример работы с ботом**
 
 При нажатии на синюю кнопку появляются подсказки по командам , их так же можно вызвать при введении в окно сообщения «/»
 ￼
@@ -98,7 +98,7 @@ _Если введен не корректный ответ на вопрос о
 
 12 После собранных запросов пользователя в чат направляются полученные параметры и уведомление о начале поиска.
 
-<img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/blob/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.27.27.png" width="500">
+<img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.27.27.png" width="500">
 
 13 В случае успешного поиска сообщается кол-во подходящий найденных отелей и публикуется запрошенная информация.
 
@@ -106,34 +106,35 @@ _Если введен не корректный ответ на вопрос о
 
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.03.png" width="500">
 
-#Команда поиска ТОП отелей (дорогие).
+**Команда поиска ТОП отелей (дорогие).**
 
 
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.32.08.png" width="500">
 
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.32.20.png" width="500">
 
-#Команда поиска ТОП отелей (бюджетные).
+**Команда поиска ТОП отелей (бюджетные).**
 ￼
 
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.31.11.png" width="500">
 
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.31.17.png" width="500">
 
-#Запись в БД осуществляется после получения всех данных в методе  generate_hotels_descriptions (information_API -> hotels)
+
+**Запись в БД осуществляется после получения всех данных в методе  generate_hotels_descriptions (information_API -> hotels)**
 
 ￼
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2015.28.40.png" width="800">
 
 
-#Команда вывода истории пользователя по поиску отелей (лимит: последние 10).
+**Команда вывода истории пользователя по поиску отелей (лимит: последние 10).**
 
 При вызове /history - обращение к database
 
 <img src="https://gitlab.skillbox.ru/mariia_orlova/python_basic_diploma/-/raw/bot_telegram/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202022-11-07%20%D0%B2%2014.29.26.png" width="500">
 
 
-#Команда удаления истории пользователя (не вынесена в подсказки пользователю, чтобы избежать случайного удаления записей).
+**Команда удаления истории пользователя (не вынесена в подсказки пользователю, чтобы избежать случайного удаления записей).**
 
 По команде /delete_history удаляются строки из БД по id-пользователя.
 Если строки отсутствуют - выводится соответствующее сообщение.
